@@ -16,6 +16,7 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 public enum UserRole {
     USER("用户", "user"),
+    FARM("农场主", "farm"),
     ADMIN("管理员", "admin"),
     BAN("封禁", "ban");
 

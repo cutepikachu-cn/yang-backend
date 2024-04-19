@@ -15,7 +15,7 @@ create table if not exists user
     user_nickname varchar(256) comment '用户昵称',
     user_avatar   varchar(1024) comment '用户头像',
     user_profile  varchar(512) comment '用户简介',
-    user_role     varchar(256) default 'user'            not null comment '用户角色：user/admin/ban',
+    user_role varchar(256) default 'user' not null comment '用户角色：user/farm/admin/ban',
     create_time   datetime     default current_timestamp not null comment '创建时间',
     update_time   datetime     default current_timestamp not null on update current_timestamp comment '更新时间',
     is_delete     tinyint      default 0                 not null comment '是否删除',
