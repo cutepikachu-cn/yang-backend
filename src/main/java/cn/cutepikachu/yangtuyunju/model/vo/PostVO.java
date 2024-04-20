@@ -5,6 +5,7 @@ import cn.hutool.json.JSONUtil;
 import lombok.Data;
 import org.springframework.beans.BeanUtils;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
@@ -77,6 +78,10 @@ public class PostVO implements Serializable {
      * 是否已收藏
      */
     private Boolean hasFavour;
+
+
+    @Serial
+    private static final long serialVersionUID = 1L;
 
     /**
      * 包装类转对象

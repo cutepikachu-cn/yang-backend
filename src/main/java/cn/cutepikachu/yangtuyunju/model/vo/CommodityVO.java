@@ -1,9 +1,5 @@
-package cn.cutepikachu.yangtuyunju.model.entity;
+package cn.cutepikachu.yangtuyunju.model.vo;
 
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableField;
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
 
 import java.io.Serial;
@@ -12,16 +8,14 @@ import java.math.BigDecimal;
 import java.util.Date;
 
 /**
- * 商品
- * @TableName commodity
+ * @author 笨蛋皮卡丘
+ * @version 1.0
  */
-@TableName(value = "commodity")
 @Data
-public class Commodity implements Serializable {
+public class CommodityVO implements Serializable {
     /**
      * id
      */
-    @TableId(type = IdType.ASSIGN_ID)
     private Long id;
 
     /**
@@ -69,17 +63,6 @@ public class Commodity implements Serializable {
      */
     private Date createTime;
 
-    /**
-     * 更新时间
-     */
-    private Date updateTime;
-
-    /**
-     * 是否删除
-     */
-    private Integer isDelete;
-
     @Serial
-    @TableField(exist = false)
     private static final long serialVersionUID = 1L;
 }

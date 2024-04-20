@@ -8,6 +8,7 @@
         <id property="id" column="id" jdbcType="BIGINT"/>
         <result property="userId" column="user_id" jdbcType="BIGINT"/>
         <result property="name" column="name" jdbcType="VARCHAR"/>
+        <result property="isSale" column="is_sale" jdbcType="TINYINT"/>
         <result property="imgUrl" column="img_url" jdbcType="VARCHAR"/>
         <result property="detail" column="detail" jdbcType="VARCHAR"/>
         <result property="visitNum" column="visit_num" jdbcType="BIGINT"/>
@@ -15,12 +16,13 @@
         <result property="hot" column="hot" jdbcType="DECIMAL"/>
         <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
         <result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
+        <result property="isDelete" column="is_delete" jdbcType="TINYINT"/>
     </resultMap>
 
     <sql id="Base_Column_List">
         id,user_id,name,
-        img_url,detail,visit_num,
-        share_num,hot,create_time,
-        update_time
+        is_sale,img_url,detail,
+        visit_num,share_num,hot,
+        create_time,update_time,is_delete
     </sql>
 </mapper>
