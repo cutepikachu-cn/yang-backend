@@ -3,7 +3,7 @@ spring:
     name: yangtuyunju
   # 默认 dev 环境
   profiles:
-    active: dev
+    active: prod
   # session 配置
   session:
     # 30 天过期
@@ -45,6 +45,14 @@ mybatis-plus:
       logic-delete-field: isDelete # 全局逻辑删除的实体字段名
       logic-delete-value: 1 # 逻辑已删除值（默认为 1）
       logic-not-delete-value: 0 # 逻辑未删除值（默认为 0）
+
+# COS 对象存储配置
+cos:
+  client:
+    accessKey: xxx
+    secretKey: xxx
+    region: xxx
+    bucket: xxx
 
 knife4j:
   enable: true
