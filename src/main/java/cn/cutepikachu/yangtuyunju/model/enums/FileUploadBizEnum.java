@@ -43,19 +43,11 @@ public enum FileUploadBizEnum {
             return null;
         }
         for (FileUploadBizEnum anEnum : FileUploadBizEnum.values()) {
-            if (anEnum.value.equals(value)) {
+            if (anEnum.value.equals(value.toLowerCase())) {
                 return anEnum;
             }
         }
         return null;
-    }
-
-    public String getValue() {
-        return value;
-    }
-
-    public String getText() {
-        return text;
     }
 
 }

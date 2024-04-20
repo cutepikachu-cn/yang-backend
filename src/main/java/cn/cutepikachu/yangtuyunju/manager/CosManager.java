@@ -5,6 +5,7 @@ import com.qcloud.cos.COSClient;
 import com.qcloud.cos.model.PutObjectRequest;
 import com.qcloud.cos.model.PutObjectResult;
 import jakarta.annotation.Resource;
+import org.springframework.stereotype.Component;
 
 import java.io.File;
 
@@ -12,6 +13,7 @@ import java.io.File;
  * @author 笨蛋皮卡丘
  * @version 1.0
  */
+@Component
 public class CosManager {
     @Resource
     private CosClientConfig cosClientConfig;
