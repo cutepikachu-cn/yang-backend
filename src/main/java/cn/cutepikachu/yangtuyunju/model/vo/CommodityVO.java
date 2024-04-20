@@ -1,6 +1,8 @@
 package cn.cutepikachu.yangtuyunju.model.vo;
 
+import cn.cutepikachu.yangtuyunju.model.entity.Commodity;
 import lombok.Data;
+import org.springframework.beans.BeanUtils;
 
 import java.io.Serial;
 import java.io.Serializable;
@@ -59,10 +61,45 @@ public class CommodityVO implements Serializable {
     private BigDecimal hot;
 
     /**
+     * 商家信息
+     */
+    private UserVO shop;
+
+    /**
      * 创建时间
      */
     private Date createTime;
 
     @Serial
     private static final long serialVersionUID = 1L;
+
+    /**
+     * 包装类转对象
+     *
+     * @param commodityVO
+     * @return
+     */
+    public static Commodity voToObj(CommodityVO commodityVO) {
+        if (commodityVO == null) {
+            return null;
+        }
+        Commodity commodity = new Commodity();
+        BeanUtils.copyProperties(commodityVO, commodity);
+        return commodity;
+    }
+
+    /**
+     * 对象转包装类
+     *
+     * @param commodity
+     * @return
+     */
+    public static CommodityVO objToVo(Commodity commodity) {
+        if (commodity == null) {
+            return null;
+        }
+        CommodityVO commodityVO = new CommodityVO();
+        BeanUtils.copyProperties(commodity, commodityVO);
+        return commodityVO;
+    }
 }
