@@ -6,6 +6,7 @@ import cn.cutepikachu.yangtuyunju.exception.BusinessException;
 import cn.cutepikachu.yangtuyunju.model.entity.User;
 import cn.cutepikachu.yangtuyunju.model.enums.UserRole;
 import cn.cutepikachu.yangtuyunju.service.UserService;
+import cn.hutool.core.util.ArrayUtil;
 import jakarta.annotation.Resource;
 import jakarta.servlet.http.HttpServletRequest;
 import org.aspectj.lang.ProceedingJoinPoint;
@@ -37,7 +38,7 @@ public class AuthInterceptor {
     @Around("@annotation(authCheck)")
     public Object doInterceptor(ProceedingJoinPoint joinPoint, AuthCheck authCheck) throws Throwable {
         // 获取所需的角色
-        UserRole mustRole = authCheck.mustRole();
+        UserRole[] mustRoles = authCheck.mustRole();
         RequestAttributes requestAttributes = RequestContextHolder.currentRequestAttributes();
         HttpServletRequest request = ((ServletRequestAttributes) requestAttributes).getRequest();
         // 获取当前登录用户的权限
@@ -49,7 +50,7 @@ public class AuthInterceptor {
             throw new BusinessException(ResponseCode.NO_AUTH_ERROR);
         }
         // 鉴权
-        if (userRole != mustRole) {
+        if (!ArrayUtil.contains(mustRoles, userRole)) {
             throw new BusinessException(ResponseCode.NO_AUTH_ERROR);
         }
 

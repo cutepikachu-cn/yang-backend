@@ -22,6 +22,6 @@ public @interface AuthCheck {
      *
      * @return
      */
-    UserRole mustRole() default UserRole.USER;
+    UserRole[] mustRole() default UserRole.USER;
 
 }
