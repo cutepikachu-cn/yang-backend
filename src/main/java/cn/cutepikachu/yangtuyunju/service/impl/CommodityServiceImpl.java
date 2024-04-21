@@ -1,18 +1,24 @@
 package cn.cutepikachu.yangtuyunju.service.impl;
 
 import cn.cutepikachu.yangtuyunju.mapper.CommodityMapper;
+import cn.cutepikachu.yangtuyunju.model.dto.commodity.CommodityQueryRequest;
 import cn.cutepikachu.yangtuyunju.model.entity.Commodity;
 import cn.cutepikachu.yangtuyunju.model.entity.User;
+import cn.cutepikachu.yangtuyunju.model.enums.SortOrder;
 import cn.cutepikachu.yangtuyunju.model.vo.CommodityVO;
 import cn.cutepikachu.yangtuyunju.model.vo.UserVO;
 import cn.cutepikachu.yangtuyunju.service.CommodityService;
 import cn.cutepikachu.yangtuyunju.service.UserService;
+import cn.cutepikachu.yangtuyunju.util.SqlUtils;
 import cn.hutool.core.collection.CollUtil;
+import cn.hutool.core.util.ObjUtil;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import jakarta.annotation.Resource;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -29,6 +35,34 @@ public class CommodityServiceImpl extends ServiceImpl<CommodityMapper, Commodity
 
     @Resource
     UserService userService;
+
+    @Override
+    public LambdaQueryWrapper<Commodity> getLambdaQueryWrapper(CommodityQueryRequest commodityQueryRequest) {
+        LambdaQueryWrapper<Commodity> lambdaQueryWrapper = new LambdaQueryWrapper<>();
+        if (commodityQueryRequest == null) {
+            return lambdaQueryWrapper;
+        }
+        Long shopId = commodityQueryRequest.getShopId();
+        lambdaQueryWrapper.eq(ObjUtil.isNotEmpty(shopId), Commodity::getUserId, shopId);
+
+        BigDecimal minPrice = commodityQueryRequest.getMinPrice();
+        BigDecimal maxPrice = commodityQueryRequest.getMaxPrice();
+        lambdaQueryWrapper.ge(ObjUtil.isNotEmpty(minPrice), Commodity::getPrice, minPrice);
+        if (ObjUtil.isNotEmpty(maxPrice) && maxPrice.compareTo(minPrice) > 0) {
+            lambdaQueryWrapper.le(Commodity::getPrice, maxPrice);
+        }
+
+        String sortField = commodityQueryRequest.getSortField();
+        String sortOrder = commodityQueryRequest.getSortOrder();
+        if (SqlUtils.validSortField(sortField)) {
+            boolean isAsc = sortOrder.equals(SortOrder.SORT_ORDER_ASC.getValue());
+            switch (sortField.toLowerCase()) {
+                case "price" -> lambdaQueryWrapper.orderBy(true, isAsc, Commodity::getPrice);
+                case "createtime" -> lambdaQueryWrapper.orderBy(true, isAsc, Commodity::getCreateTime);
+            }
+        }
+        return lambdaQueryWrapper;
+    }
 
     @Override
     public CommodityVO getCommodityVO(Commodity commodity) {

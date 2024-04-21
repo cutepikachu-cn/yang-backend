@@ -3,14 +3,20 @@ package cn.cutepikachu.yangtuyunju.controller;
 import cn.cutepikachu.yangtuyunju.annotation.AuthCheck;
 import cn.cutepikachu.yangtuyunju.common.BaseResponse;
 import cn.cutepikachu.yangtuyunju.common.DeleteRequest;
+import cn.cutepikachu.yangtuyunju.common.ResponseCode;
+import cn.cutepikachu.yangtuyunju.exception.BusinessException;
 import cn.cutepikachu.yangtuyunju.model.dto.commodity.CommodityAddRequest;
 import cn.cutepikachu.yangtuyunju.model.dto.commodity.CommodityQueryRequest;
 import cn.cutepikachu.yangtuyunju.model.dto.commodity.CommodityUpdateRequest;
 import cn.cutepikachu.yangtuyunju.model.entity.Commodity;
+import cn.cutepikachu.yangtuyunju.model.entity.User;
 import cn.cutepikachu.yangtuyunju.model.enums.UserRole;
 import cn.cutepikachu.yangtuyunju.model.vo.CommodityVO;
 import cn.cutepikachu.yangtuyunju.service.CommodityService;
+import cn.cutepikachu.yangtuyunju.service.UserService;
 import cn.cutepikachu.yangtuyunju.util.ResultUtils;
+import cn.cutepikachu.yangtuyunju.util.ThrowUtils;
+import cn.hutool.core.bean.BeanUtil;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import jakarta.annotation.Resource;
 import jakarta.servlet.http.HttpServletRequest;
@@ -30,6 +36,10 @@ public class CommodityController {
     @Resource
     CommodityService commodityService;
 
+
+    @Resource
+    UserService userService;
+
     /**
      * 创建（仅羊场主）
      *
@@ -40,7 +50,14 @@ public class CommodityController {
     @AuthCheck(mustRole = UserRole.FARM)
     @PostMapping("/add")
     public BaseResponse<Long> addCommodity(@RequestBody @Valid CommodityAddRequest commodityAddRequest, HttpServletRequest request) {
-        return ResultUtils.success(-1L);
+        Commodity commodity = new Commodity();
+        User loginUser = userService.getLoginUser(request);
+        commodity.setUserId(loginUser.getId());
+        BeanUtil.copyProperties(commodityAddRequest, commodity);
+        boolean result = commodityService.save(commodity);
+        ThrowUtils.throwIf(!result, ResponseCode.OPERATION_ERROR, "添加商品失败");
+        Long commodityId = commodity.getId();
+        return ResultUtils.success(commodityId);
     }
 
     /**
@@ -50,10 +67,21 @@ public class CommodityController {
      * @param request
      * @return
      */
-    @AuthCheck(mustRole = UserRole.FARM)
+    @AuthCheck(mustRole = {UserRole.FARM, UserRole.ADMIN})
     @PostMapping("/delete")
     public BaseResponse<Boolean> deleteCommodity(@RequestBody @Valid DeleteRequest deleteRequest, HttpServletRequest request) {
-        return ResultUtils.success(false);
+        long commodityId = deleteRequest.getId();
+        Commodity oldCommodity = commodityService.getById(commodityId);
+        // 商品是否存在
+        ThrowUtils.throwIf(oldCommodity == null, ResponseCode.NOT_FOUND_ERROR, "商品不存在");
+        User user = userService.getLoginUser(request);
+        // 仅羊场主自己和管理员可删除
+        if (!oldCommodity.getUserId().equals(user.getId())) {
+            throw new BusinessException(ResponseCode.NO_AUTH_ERROR);
+        }
+        boolean result = commodityService.removeById(commodityId);
+        ThrowUtils.throwIf(!result, ResponseCode.OPERATION_ERROR, "删除商品失败");
+        return ResultUtils.success(true);
     }
 
     /**
@@ -63,9 +91,23 @@ public class CommodityController {
      * @return
      */
     @PostMapping("/update")
-    @AuthCheck(mustRole = UserRole.FARM)
-    public BaseResponse<Boolean> updatePost(@RequestBody @Valid CommodityUpdateRequest commodityUpdateRequest) {
-        return ResultUtils.success(false);
+    @AuthCheck(mustRole = {UserRole.FARM, UserRole.ADMIN})
+    public BaseResponse<Boolean> updateCommodity(@RequestBody @Valid CommodityUpdateRequest commodityUpdateRequest, HttpServletRequest request) {
+        // 是否存在
+        long commodityId = commodityUpdateRequest.getId();
+        Commodity oldCommodity = commodityService.getById(commodityId);
+        ThrowUtils.throwIf(oldCommodity == null, ResponseCode.NOT_FOUND_ERROR, "商品不存在");
+        // 仅羊场主自己和管理员可更新
+        User user = userService.getLoginUser(request);
+        if (!oldCommodity.getUserId().equals(user.getId())) {
+            throw new BusinessException(ResponseCode.NO_AUTH_ERROR);
+        }
+
+        Commodity commodity = new Commodity();
+        BeanUtil.copyProperties(commodityUpdateRequest, commodity);
+        boolean result = commodityService.updateById(commodity);
+        ThrowUtils.throwIf(!result, ResponseCode.OPERATION_ERROR, "更新商品信息失败");
+        return ResultUtils.success(true);
     }
 
     /**
@@ -76,19 +118,25 @@ public class CommodityController {
      */
     @GetMapping("/get/vo")
     public BaseResponse<CommodityVO> getCommodityVOById(@RequestParam long id, HttpServletRequest request) {
-        return ResultUtils.success(new CommodityVO());
+        Commodity commodity = commodityService.getById(id);
+        ThrowUtils.throwIf(commodity == null, ResponseCode.NOT_FOUND_ERROR, "商品不存在");
+        CommodityVO commodityVO = commodityService.getCommodityVO(commodity);
+        return ResultUtils.success(commodityVO);
     }
 
     /**
-     * 分页获取列表（仅羊场主）
+     * 分页获取列表（仅羊场主/管理员）
      *
      * @param commodityQueryRequest
      * @return
      */
     @PostMapping("/list/page")
-    @AuthCheck(mustRole = UserRole.FARM)
+    @AuthCheck(mustRole = {UserRole.FARM, UserRole.ADMIN})
     public BaseResponse<Page<Commodity>> listCommodityByPage(@RequestBody @Valid CommodityQueryRequest commodityQueryRequest) {
-        return ResultUtils.success(new Page<>());
+        long current = commodityQueryRequest.getCurrent();
+        long pageSize = commodityQueryRequest.getPageSize();
+        Page<Commodity> commodityPage = commodityService.page(new Page<>(current, pageSize), commodityService.getLambdaQueryWrapper(commodityQueryRequest));
+        return ResultUtils.success(commodityPage);
     }
 
     /**
@@ -101,7 +149,11 @@ public class CommodityController {
     @PostMapping("/list/page/vo")
     public BaseResponse<Page<CommodityVO>> listCommodityVOByPage(@RequestBody CommodityQueryRequest commodityQueryRequest,
                                                                  HttpServletRequest request) {
-        return ResultUtils.success(new Page<>());
+        long current = commodityQueryRequest.getCurrent();
+        long pageSize = commodityQueryRequest.getPageSize();
+        Page<Commodity> commodityPage = commodityService.page(new Page<>(current, pageSize), commodityService.getLambdaQueryWrapper(commodityQueryRequest));
+        Page<CommodityVO> commodityVOPage = commodityService.getCommodityVOPage(commodityPage);
+        return ResultUtils.success(commodityVOPage);
     }
 
     /**
@@ -111,9 +163,16 @@ public class CommodityController {
      * @param request
      * @return
      */
+    @AuthCheck(mustRole = UserRole.FARM)
     @PostMapping("/self/list/page/vo")
     public BaseResponse<Page<CommodityVO>> listSelfCommodityVOByPage(@RequestBody @Valid CommodityQueryRequest commodityQueryRequest,
                                                                      HttpServletRequest request) {
-        return ResultUtils.success(new Page<>());
+        User loginUser = userService.getLoginUser(request);
+        commodityQueryRequest.setShopId(loginUser.getId());
+        long current = commodityQueryRequest.getCurrent();
+        long pageSize = commodityQueryRequest.getPageSize();
+        Page<Commodity> commodityPage = commodityService.page(new Page<>(current, pageSize), commodityService.getLambdaQueryWrapper(commodityQueryRequest));
+        Page<CommodityVO> commodityVOPage = commodityService.getCommodityVOPage(commodityPage);
+        return ResultUtils.success(commodityVOPage);
     }
 }

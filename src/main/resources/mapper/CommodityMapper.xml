@@ -11,6 +11,7 @@
         <result property="isSale" column="is_sale" jdbcType="TINYINT"/>
         <result property="imgUrl" column="img_url" jdbcType="VARCHAR"/>
         <result property="detail" column="detail" jdbcType="VARCHAR"/>
+        <result property="price" column="price" jdbcType="DECIMAL"/>
         <result property="visitNum" column="visit_num" jdbcType="BIGINT"/>
         <result property="shareNum" column="share_num" jdbcType="BIGINT"/>
         <result property="hot" column="hot" jdbcType="DECIMAL"/>

@@ -10,13 +10,13 @@ import cn.cutepikachu.yangtuyunju.model.enums.UserRole;
 import cn.cutepikachu.yangtuyunju.model.vo.LoginUserVO;
 import cn.cutepikachu.yangtuyunju.model.vo.UserVO;
 import cn.cutepikachu.yangtuyunju.service.UserService;
+import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.collection.CollUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.util.DigestUtils;
 
@@ -129,7 +129,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
             return null;
         }
         LoginUserVO loginUserVO = new LoginUserVO();
-        BeanUtils.copyProperties(user, loginUserVO);
+        BeanUtil.copyProperties(user, loginUserVO);
         return loginUserVO;
     }
 
@@ -139,7 +139,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
             return null;
         }
         UserVO userVO = new UserVO();
-        BeanUtils.copyProperties(user, userVO);
+        BeanUtil.copyProperties(user, userVO);
         return userVO;
     }
 

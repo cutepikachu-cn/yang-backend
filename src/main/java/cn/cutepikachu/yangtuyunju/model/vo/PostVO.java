@@ -1,9 +1,9 @@
 package cn.cutepikachu.yangtuyunju.model.vo;
 
 import cn.cutepikachu.yangtuyunju.model.entity.Post;
+import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.json.JSONUtil;
 import lombok.Data;
-import org.springframework.beans.BeanUtils;
 
 import java.io.Serial;
 import java.io.Serializable;
@@ -94,7 +94,7 @@ public class PostVO implements Serializable {
             return null;
         }
         Post post = new Post();
-        BeanUtils.copyProperties(postVO, post);
+        BeanUtil.copyProperties(postVO, post);
         List<String> tagList = postVO.getTagList();
         post.setTags(JSONUtil.toJsonStr(tagList));
         return post;
@@ -111,7 +111,7 @@ public class PostVO implements Serializable {
             return null;
         }
         PostVO postVO = new PostVO();
-        BeanUtils.copyProperties(post, postVO);
+        BeanUtil.copyProperties(post, postVO);
         postVO.setTagList(JSONUtil.toList(post.getTags(), String.class));
         return postVO;
     }

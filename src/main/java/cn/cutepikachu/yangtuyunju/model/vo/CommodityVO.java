@@ -1,8 +1,8 @@
 package cn.cutepikachu.yangtuyunju.model.vo;
 
 import cn.cutepikachu.yangtuyunju.model.entity.Commodity;
+import cn.hutool.core.bean.BeanUtil;
 import lombok.Data;
-import org.springframework.beans.BeanUtils;
 
 import java.io.Serial;
 import java.io.Serializable;
@@ -46,6 +46,11 @@ public class CommodityVO implements Serializable {
     private String detail;
 
     /**
+     * 价格
+     */
+    private BigDecimal price;
+
+    /**
      * 商品访问次数
      */
     private Long visitNum;
@@ -84,7 +89,7 @@ public class CommodityVO implements Serializable {
             return null;
         }
         Commodity commodity = new Commodity();
-        BeanUtils.copyProperties(commodityVO, commodity);
+        BeanUtil.copyProperties(commodityVO, commodity);
         return commodity;
     }
 
@@ -99,7 +104,7 @@ public class CommodityVO implements Serializable {
             return null;
         }
         CommodityVO commodityVO = new CommodityVO();
-        BeanUtils.copyProperties(commodity, commodityVO);
+        BeanUtil.copyProperties(commodity, commodityVO);
         return commodityVO;
     }
 }

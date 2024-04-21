@@ -17,6 +17,7 @@ import cn.cutepikachu.yangtuyunju.service.PostService;
 import cn.cutepikachu.yangtuyunju.service.UserService;
 import cn.cutepikachu.yangtuyunju.util.ResultUtils;
 import cn.cutepikachu.yangtuyunju.util.ThrowUtils;
+import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.json.JSONUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -24,7 +25,6 @@ import jakarta.annotation.Resource;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.BeanUtils;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -56,7 +56,7 @@ public class PostController {
     @PostMapping("/add")
     public BaseResponse<Long> addPost(@RequestBody @Valid PostAddRequest postAddRequest, HttpServletRequest request) {
         Post post = new Post();
-        BeanUtils.copyProperties(postAddRequest, post);
+        BeanUtil.copyProperties(postAddRequest, post);
         List<String> tags = postAddRequest.getTags();
         post.setTags(JSONUtil.toJsonStr(tags));
         User loginUser = userService.getLoginUser(request);
@@ -86,7 +86,8 @@ public class PostController {
             throw new BusinessException(ResponseCode.NO_AUTH_ERROR);
         }
         boolean result = postService.removeById(id);
-        return ResultUtils.success(result);
+        ThrowUtils.throwIf(!result, ResponseCode.OPERATION_ERROR, "删除帖子失败");
+        return ResultUtils.success(true);
     }
 
     /**
@@ -99,7 +100,7 @@ public class PostController {
     @AuthCheck(mustRole = UserRole.ADMIN)
     public BaseResponse<Boolean> updatePost(@RequestBody @Valid PostUpdateRequest postUpdateRequest) {
         Post post = new Post();
-        BeanUtils.copyProperties(postUpdateRequest, post);
+        BeanUtil.copyProperties(postUpdateRequest, post);
         List<String> tags = postUpdateRequest.getTags();
         post.setTags(JSONUtil.toJsonStr(tags));
         long id = postUpdateRequest.getId();
@@ -119,9 +120,7 @@ public class PostController {
     @GetMapping("/get/vo")
     public BaseResponse<PostVO> getPostVOById(@RequestParam long id, HttpServletRequest request) {
         Post post = postService.getById(id);
-        if (post == null) {
-            throw new BusinessException(ResponseCode.NOT_FOUND_ERROR);
-        }
+        ThrowUtils.throwIf(post == null, ResponseCode.NOT_FOUND_ERROR, "帖子不存在");
         PostVO postVO = postService.getPostVO(post, request);
         return ResultUtils.success(postVO);
     }
@@ -190,7 +189,7 @@ public class PostController {
     @PostMapping("/edit")
     public BaseResponse<Boolean> editPost(@RequestBody @Valid PostEditRequest postEditRequest, HttpServletRequest request) {
         Post post = new Post();
-        BeanUtils.copyProperties(postEditRequest, post);
+        BeanUtil.copyProperties(postEditRequest, post);
         List<String> tags = postEditRequest.getTags();
         post.setTags(JSONUtil.toJsonStr(tags));
         User loginUser = userService.getLoginUser(request);

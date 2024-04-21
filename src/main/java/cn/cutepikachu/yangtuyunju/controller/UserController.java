@@ -13,13 +13,13 @@ import cn.cutepikachu.yangtuyunju.model.vo.UserVO;
 import cn.cutepikachu.yangtuyunju.service.UserService;
 import cn.cutepikachu.yangtuyunju.util.ResultUtils;
 import cn.cutepikachu.yangtuyunju.util.ThrowUtils;
+import cn.hutool.core.bean.BeanUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import jakarta.annotation.Resource;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.BeanUtils;
 import org.springframework.util.DigestUtils;
 import org.springframework.web.bind.annotation.*;
 
@@ -114,7 +114,7 @@ public class UserController {
             throw new BusinessException(ResponseCode.PARAMS_ERROR, "账户已存在");
         }
         User user = new User();
-        BeanUtils.copyProperties(userAddRequest, user);
+        BeanUtil.copyProperties(userAddRequest, user);
         // 默认密码 12345678
         String defaultPassword = "12345678";
         String encryptPassword = DigestUtils.md5DigestAsHex((SALT + defaultPassword).getBytes());
@@ -150,7 +150,7 @@ public class UserController {
     @AuthCheck(mustRole = UserRole.ADMIN)
     public BaseResponse<Boolean> updateUser(@RequestBody @Valid UserUpdateRequest userUpdateRequest) {
         User user = new User();
-        BeanUtils.copyProperties(userUpdateRequest, user);
+        BeanUtil.copyProperties(userUpdateRequest, user);
         boolean result;
         try {
             result = userService.updateById(user);
@@ -237,7 +237,7 @@ public class UserController {
                                             HttpServletRequest request) {
         User loginUser = userService.getLoginUser(request);
         User user = new User();
-        BeanUtils.copyProperties(userUpdateSelfRequest, user);
+        BeanUtil.copyProperties(userUpdateSelfRequest, user);
         user.setId(loginUser.getId());
         if (user.getUserPassword() != null) {
             String encryptPassword = DigestUtils.md5DigestAsHex((SALT + user.getUserPassword()).getBytes());

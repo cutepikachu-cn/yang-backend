@@ -1,7 +1,9 @@
 package cn.cutepikachu.yangtuyunju.service;
 
+import cn.cutepikachu.yangtuyunju.model.dto.commodity.CommodityQueryRequest;
 import cn.cutepikachu.yangtuyunju.model.entity.Commodity;
 import cn.cutepikachu.yangtuyunju.model.vo.CommodityVO;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
 
@@ -11,6 +13,15 @@ import com.baomidou.mybatisplus.extension.service.IService;
  * @createDate 2024-04-20 23:24:05
  */
 public interface CommodityService extends IService<Commodity> {
+
+    /**
+     * 获取查询条件
+     *
+     * @param commodityQueryRequest
+     * @return
+     */
+    LambdaQueryWrapper<Commodity> getLambdaQueryWrapper(CommodityQueryRequest commodityQueryRequest);
+
     /**
      * 获取商品封装
      *

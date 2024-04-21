@@ -50,6 +50,11 @@ public class Commodity implements Serializable {
     private String detail;
 
     /**
+     * 价格
+     */
+    private BigDecimal price;
+
+    /**
      * 商品访问次数
      */
     private Long visitNum;
