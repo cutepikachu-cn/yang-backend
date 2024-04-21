@@ -72,14 +72,15 @@ create table if not exists commodity
     id          bigint unsigned auto_increment comment 'id' primary key,
     user_id     bigint unsigned                                  not null comment '商品用户（羊场主）id',
     name        varchar(64)                                      not null comment '商品名称',
-    is_sale   tinyint default 0 not null comment '是否上架：0 未上架/1 已上架',
+    is_sale   tinyint         default 0 not null comment '是否上架：0 未上架/1 已上架',
     img_url     varchar(512)                                     not null comment '商品图url',
     detail      text                                             not null comment '商品详情',
+    stock     bigint unsigned default 0 not null comment '商品库存',
     visit_num   bigint unsigned        default 0                 not null comment '商品访问次数',
     share_num   bigint unsigned        default 0                 not null comment '商品分享次数',
     hot         decimal(2, 1) unsigned default 2.5               not null comment '商品热度',
     create_time datetime               default CURRENT_TIMESTAMP not null comment '创建时间',
     update_time datetime               default CURRENT_TIMESTAMP not null on update CURRENT_TIMESTAMP comment '更新时间',
-    is_delete tinyint default 0 not null comment '是否删除',
+    is_delete tinyint         default 0 not null comment '是否删除',
     index idx_user_id (user_id)
 ) comment '商品' collate = utf8mb4_unicode_ci;

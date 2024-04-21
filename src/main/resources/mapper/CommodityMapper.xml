@@ -11,6 +11,7 @@
         <result property="isSale" column="is_sale" jdbcType="TINYINT"/>
         <result property="imgUrl" column="img_url" jdbcType="VARCHAR"/>
         <result property="detail" column="detail" jdbcType="VARCHAR"/>
+        <result property="stock" column="stock" jdbcType="BIGINT"/>
         <result property="price" column="price" jdbcType="DECIMAL"/>
         <result property="visitNum" column="visit_num" jdbcType="BIGINT"/>
         <result property="shareNum" column="share_num" jdbcType="BIGINT"/>
@@ -22,7 +23,7 @@
 
     <sql id="Base_Column_List">
         id,user_id,name,
-        is_sale,img_url,detail,
+        is_sale,img_url,detail,stock,price
         visit_num,share_num,hot,
         create_time,update_time,is_delete
     </sql>
