@@ -38,7 +38,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
         implements UserService {
 
     @Override
-    public long userRegister(String userAccount, String userPassword, String checkPassword) {
+    public long userRegister(String userAccount, String userPassword, String checkPassword, String userNickname, String userRole) {
         synchronized (userAccount.intern()) {
             LambdaQueryWrapper<User> lambdaQueryWrapper = new LambdaQueryWrapper<>();
             lambdaQueryWrapper.eq(User::getUserAccount, userAccount);
@@ -50,6 +50,8 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
             User user = new User();
             user.setUserAccount(userAccount);
             user.setUserPassword(encryptPassword);
+            user.setUserNickname(userNickname);
+            user.setUserRole(userRole.toLowerCase());
             boolean saveResult = save(user);
             if (!saveResult) {
                 throw new BusinessException(ResponseCode.SYSTEM_ERROR, "注册失败");
