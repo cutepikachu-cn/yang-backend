@@ -84,3 +84,32 @@ create table if not exists commodity
     is_delete tinyint         default 0 not null comment '是否删除',
     index idx_user_id (user_id)
 ) comment '商品' collate = utf8mb4_unicode_ci;
+
+-- 课程类型表
+drop table if exists course_type;
+create table if not exists course_type
+(
+    id          bigint unsigned auto_increment comment 'id' primary key,
+    name        varchar(64)                        not null comment '课程类型名',
+    img_url     varchar(512)                       not null comment '课程类型图片',
+    description varchar(512)                       not null comment '课程类型描述',
+    create_time datetime default CURRENT_TIMESTAMP not null comment '创建时间',
+    update_time datetime default CURRENT_TIMESTAMP not null on update CURRENT_TIMESTAMP comment '更新时间',
+    is_delete   tinyint  default 0                 not null comment '是否删除'
+) comment '课程类型' collate = utf8mb4_unicode_ci;
+
+-- 课程表
+drop table if exists course;
+create table if not exists course
+(
+    id             bigint unsigned auto_increment comment 'id' primary key,
+    course_type_id bigint unsigned                    not null comment '课程类型id',
+    name           varchar(64)                        not null comment '课程名',
+    img_url        varchar(512)                       not null comment '课程图片',
+    description    varchar(512)                       not null comment '课程描述',
+    create_time    datetime default CURRENT_TIMESTAMP not null comment '创建时间',
+    update_time    datetime default CURRENT_TIMESTAMP not null on update CURRENT_TIMESTAMP comment '更新时间',
+    is_delete      tinyint  default 0                 not null comment '是否删除',
+    index idx_course_type_id (course_type_id)
+) comment '课程类型' collate = utf8mb4_unicode_ci;
+
