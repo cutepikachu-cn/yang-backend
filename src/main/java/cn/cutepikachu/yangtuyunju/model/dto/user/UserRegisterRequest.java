@@ -33,6 +33,8 @@ public class UserRegisterRequest implements Serializable {
     @Length(min = 4, max = 20)
     private String userNickname;
 
+    private String userAvatar = "http://source.cute-pikachu.cn/default_img/avatar.webp";
+
     private String userRole = UserRole.USER.getValue();
 
     @Serial
@@ -45,6 +47,7 @@ public class UserRegisterRequest implements Serializable {
 
     @AssertTrue
     boolean isValidUserRole() {
-        return userRole == null || UserRole.getEnumByValue(userRole) != null;
+        UserRole userRoleEnum = UserRole.getEnumByValue(userRole);
+        return userRoleEnum != null && userRoleEnum != UserRole.ADMIN;
     }
 }
