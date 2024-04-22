@@ -111,5 +111,5 @@ create table if not exists course
     update_time    datetime default CURRENT_TIMESTAMP not null on update CURRENT_TIMESTAMP comment '更新时间',
     is_delete      tinyint  default 0                 not null comment '是否删除',
     index idx_course_type_id (course_type_id)
-) comment '课程类型' collate = utf8mb4_unicode_ci;
+) comment '课程' collate = utf8mb4_unicode_ci;
 
