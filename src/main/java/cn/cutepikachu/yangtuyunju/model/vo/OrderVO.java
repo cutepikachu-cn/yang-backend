@@ -26,9 +26,19 @@ public class OrderVO implements Serializable {
     private Long userId;
 
     /**
+     * 店铺ID
+     */
+    private Long shopId;
+
+    /**
      * 商品ID
      */
     private Long commodityId;
+
+    /**
+     * 商品信息（含商家信息）
+     */
+    private CommodityVO commodity;
 
     /**
      * 订单状态: unpaid-未支付, paid-已支付, shipped-已发货, completed-已完成, cancelled-已取消, after_sale-售后中

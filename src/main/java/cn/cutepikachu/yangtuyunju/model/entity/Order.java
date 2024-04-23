@@ -30,6 +30,11 @@ public class Order implements Serializable {
     private Long userId;
 
     /**
+     * 店铺ID
+     */
+    private Long shopId;
+
+    /**
      * 商品ID
      */
     private Long commodityId;
