@@ -9,6 +9,8 @@
     <description>yangtuyunju</description>
     <properties>
         <java.version>17</java.version>
+        <maven.compiler.source>17</maven.compiler.source>
+        <maven.compiler.target>17</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <spring-boot.version>3.1.8</spring-boot.version>
@@ -132,8 +134,8 @@
                 <artifactId>spring-boot-maven-plugin</artifactId>
                 <version>${spring-boot.version}</version>
                 <configuration>
-                    <mainClass>cn.cutepikachu.yangtuyunju.SpringbootInitApplication</mainClass>
-                    <skip>true</skip>
+                    <mainClass>cn.cutepikachu.yangtuyunju.YnagtuyunjuApplication</mainClass>
+                    <!-- <skip>true</skip> -->
                     <excludes>
                         <exclude>
                             <groupId>org.projectlombok</groupId>
