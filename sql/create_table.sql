@@ -7,6 +7,7 @@ create database if not exists yangtuyunju;
 use yangtuyunju;
 
 -- 用户表
+drop table if exists user;
 create table if not exists user
 (
     id        bigint unsigned auto_increment primary key comment 'id',
@@ -84,6 +85,24 @@ create table if not exists commodity
     is_delete tinyint         default 0 not null comment '是否删除',
     index idx_user_id (user_id)
 ) comment '商品' collate = utf8mb4_unicode_ci;
+
+-- 订单表
+drop table if exists `order`;
+create table if not exists `order`
+(
+    id             bigint unsigned auto_increment primary key comment '订单ID',
+    user_id        bigint unsigned                       not null comment '下单用户ID',
+    commodity_id   bigint unsigned                       not null comment '商品ID',
+    status         varchar(16)                           not null default 'unpaid' comment '订单状态: unpaid-未支付, paid-已支付, shipped-已发货, completed-已完成, cancelled-已取消, after_sale-售后中',
+    pay_time       datetime    default null comment '订单支付时间',
+    refund_time    datetime    default null comment '订单退款时间',
+    payment_method varchar(16) default null comment '订单支付方式: alipay-支付宝, wechat-微信支付, bank_card-银行卡',
+    create_time    datetime    default current_timestamp not null comment '订单创建时间',
+    update_time    datetime    default current_timestamp not null on update current_timestamp comment '订单更新时间',
+    is_delete      tinyint     default 0                 not null comment '是否删除',
+    index idx_user_id (user_id),
+    index idx_status (status)
+) comment '订单表' collate = utf8mb4_unicode_ci;
 
 -- 课程类型表
 drop table if exists course_type;
