@@ -4,11 +4,17 @@ import cn.cutepikachu.yangtuyunju.annotation.AuthCheck;
 import cn.cutepikachu.yangtuyunju.common.BaseResponse;
 import cn.cutepikachu.yangtuyunju.common.ResponseCode;
 import cn.cutepikachu.yangtuyunju.exception.BusinessException;
+import cn.cutepikachu.yangtuyunju.model.dto.OrderPayRequest;
+import cn.cutepikachu.yangtuyunju.model.dto.order.OrderAddRequest;
 import cn.cutepikachu.yangtuyunju.model.dto.order.OrderQueryRequest;
+import cn.cutepikachu.yangtuyunju.model.entity.Commodity;
 import cn.cutepikachu.yangtuyunju.model.entity.Order;
 import cn.cutepikachu.yangtuyunju.model.entity.User;
+import cn.cutepikachu.yangtuyunju.model.enums.OrderPayMethod;
+import cn.cutepikachu.yangtuyunju.model.enums.OrderStatus;
 import cn.cutepikachu.yangtuyunju.model.enums.UserRole;
 import cn.cutepikachu.yangtuyunju.model.vo.OrderVO;
+import cn.cutepikachu.yangtuyunju.service.CommodityService;
 import cn.cutepikachu.yangtuyunju.service.OrderService;
 import cn.cutepikachu.yangtuyunju.service.UserService;
 import cn.cutepikachu.yangtuyunju.util.ResultUtils;
@@ -20,6 +26,8 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.Date;
 
 /**
  * @author 笨蛋皮卡丘
@@ -35,6 +43,56 @@ public class OrderController {
 
     @Resource
     UserService userService;
+
+    @Resource
+    CommodityService commodityService;
+
+    @PostMapping("/add")
+    @AuthCheck(mustRole = UserRole.USER)
+    public BaseResponse<Long> addOrder(@RequestBody @Valid OrderAddRequest orderAddRequest, HttpServletRequest request) {
+        Long commodityId = orderAddRequest.getCommodityId();
+        Commodity commodity = commodityService.getById(commodityId);
+        ThrowUtils.throwIf(commodity == null, ResponseCode.NOT_FOUND_ERROR, "商品不存在");
+
+        Long quantity = orderAddRequest.getQuantity();
+        User loginUser = userService.getLoginUser(request);
+        Order order = new Order();
+
+        order.setCommodityId(commodityId);
+        order.setShopId(commodity.getUserId());
+        order.setQuantity(quantity);
+        order.setUserId(loginUser.getId());
+        order.setStatus(OrderStatus.UNPAID.getValue());
+
+        boolean result = orderService.save(order);
+        ThrowUtils.throwIf(!result, ResponseCode.OPERATION_ERROR, "创建订单失败");
+
+        return ResultUtils.success(order.getId());
+    }
+
+    @PostMapping("/pay")
+    @AuthCheck(mustRole = UserRole.USER)
+    public BaseResponse<Boolean> payOrder(@RequestBody @Valid OrderPayRequest orderPayRequest, HttpServletRequest request) {
+        Long orderId = orderPayRequest.getOrderId();
+        Order order = orderService.getById(orderId);
+        ThrowUtils.throwIf(order == null, ResponseCode.NOT_FOUND_ERROR, "订单不存在");
+        User loginUser = userService.getLoginUser(request);
+        Long userId = order.getUserId();
+        ThrowUtils.throwIf(!userId.equals(loginUser.getId()), ResponseCode.NOT_FOUND_ERROR, "订单不存在");
+
+        String orderPayMethod = orderPayRequest.getOrderPayMethod();
+        OrderPayMethod payMethod = OrderPayMethod.getEnumByValue(orderPayMethod);
+
+        order.setStatus(OrderStatus.PAID.getValue());
+        ThrowUtils.throwIf(payMethod == null, ResponseCode.OPERATION_ERROR, "支付失败");
+        order.setPaymentMethod(payMethod.getValue());
+        order.setPayTime(new Date());
+
+        boolean result = orderService.updateById(order);
+        ThrowUtils.throwIf(!result, ResponseCode.OPERATION_ERROR, "支付失败");
+
+        return ResultUtils.success("支付成功");
+    }
 
     @PostMapping("/page")
     @AuthCheck(mustRole = UserRole.ADMIN)

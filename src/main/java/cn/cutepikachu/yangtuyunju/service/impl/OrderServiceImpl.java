@@ -40,6 +40,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order>
     public LambdaQueryWrapper<Order> getLambdaQueryWrapper(OrderQueryRequest orderQueryRequest) {
         LambdaQueryWrapper<Order> lambdaQueryWrapper = new LambdaQueryWrapper<>();
         Long userId = orderQueryRequest.getUserId();
+        Long shopId = orderQueryRequest.getShopId();
         Long commodityId = orderQueryRequest.getCommodityId();
         String status = orderQueryRequest.getStatus();
         Date createTimeBegin = orderQueryRequest.getCreateTimeBegin();
@@ -50,6 +51,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order>
         String sortOrder = orderQueryRequest.getSortOrder();
 
         lambdaQueryWrapper.eq(ObjectUtil.isNotEmpty(userId), Order::getUserId, userId);
+        lambdaQueryWrapper.eq(ObjectUtil.isNotEmpty(shopId), Order::getShopId, shopId);
         lambdaQueryWrapper.eq(ObjectUtil.isNotEmpty(commodityId), Order::getCommodityId, commodityId);
         lambdaQueryWrapper.eq(ObjectUtil.isNotEmpty(status), Order::getCommodityId, commodityId);
 
