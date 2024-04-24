@@ -9,6 +9,7 @@
         <result property="userId" column="user_id" jdbcType="BIGINT"/>
         <result property="shopId" column="shop_id" jdbcType="BIGINT"/>
         <result property="commodityId" column="commodity_id" jdbcType="BIGINT"/>
+        <result property="quantity" column="quantity" jdbcType="BIGINT"/>
         <result property="status" column="status" jdbcType="VARCHAR"/>
         <result property="payTime" column="pay_time" jdbcType="TIMESTAMP"/>
         <result property="refundTime" column="refund_time" jdbcType="TIMESTAMP"/>
@@ -19,7 +20,7 @@
     </resultMap>
 
     <sql id="Base_Column_List">
-        id,user_id,shop_id,commodity_id,
+        id,user_id,shop_id,commodity_id,quantity
         status,pay_time,refund_time,
         payment_method,create_time,update_time,
         is_delete

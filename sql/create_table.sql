@@ -93,8 +93,9 @@ create table if not exists `order`
 (
     id             bigint unsigned auto_increment primary key comment '订单ID',
     user_id        bigint unsigned                       not null comment '下单用户ID',
-    shop_id bigint unsigned not null comment '店铺ID',
+    shop_id  bigint unsigned not null comment '店铺ID',
     commodity_id   bigint unsigned                       not null comment '商品ID',
+    quantity bigint unsigned not null comment '数量',
     status         varchar(16)                           not null default 'unpaid' comment '订单状态: unpaid-未支付, paid-已支付, shipped-已发货, completed-已完成, cancelled-已取消, after_sale-售后中',
     pay_time       datetime    default null comment '订单支付时间',
     refund_time    datetime    default null comment '订单退款时间',

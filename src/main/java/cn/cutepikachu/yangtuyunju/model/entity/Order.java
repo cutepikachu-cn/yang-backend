@@ -40,6 +40,11 @@ public class Order implements Serializable {
     private Long commodityId;
 
     /**
+     * 数量
+     */
+    private Long quantity;
+
+    /**
      * 订单状态: unpaid-未支付, paid-已支付, shipped-已发货, completed-已完成, cancelled-已取消, after_sale-售后中
      */
     private String status;

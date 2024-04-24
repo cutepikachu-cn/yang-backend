@@ -36,6 +36,11 @@ public class OrderVO implements Serializable {
     private Long commodityId;
 
     /**
+     * 数量
+     */
+    private Long quantity;
+
+    /**
      * 商品信息（含商家信息）
      */
     private CommodityVO commodity;
