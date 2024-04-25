@@ -8,6 +8,7 @@ import java.io.Serial;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.List;
 
 /**
  * @author 笨蛋皮卡丘
@@ -38,7 +39,7 @@ public class CommodityVO implements Serializable {
     /**
      * 商品图url
      */
-    private String imgUrl;
+    private List<String> imgUrl;
 
     /**
      * 商品详情

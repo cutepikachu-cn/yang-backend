@@ -75,7 +75,7 @@ create table if not exists commodity
     name        varchar(64)                                       not null comment '商品名称',
     is_sale     tinyint                 default 0                 not null comment '是否上架：0 未上架/1 已上架',
     price       decimal(10, 2) unsigned default 0                 not null comment '商品价格',
-    img_url     varchar(512)                                      not null comment '商品图url',
+    img_url text not null comment '商品图url',
     detail      text                                              not null comment '商品详情',
     stock       bigint unsigned         default 0                 not null comment '商品库存',
     visit_num   bigint unsigned         default 0                 not null comment '商品访问次数',

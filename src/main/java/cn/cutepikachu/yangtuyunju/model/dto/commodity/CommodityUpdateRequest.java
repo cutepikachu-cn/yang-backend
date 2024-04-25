@@ -10,6 +10,7 @@ import org.hibernate.validator.constraints.Range;
 import java.io.Serial;
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.List;
 
 /**
  * @author 笨蛋皮卡丘
@@ -28,8 +29,7 @@ public class CommodityUpdateRequest implements Serializable {
     @Range(min = 0, max = 1)
     private Integer isSale;
 
-    @Length(min = 1, max = 512)
-    private String imgUrl;
+    private List<String> imgUrl;
 
     @Length(min = 10, max = 2048)
     private String detail;

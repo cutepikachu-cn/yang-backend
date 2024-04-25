@@ -1,5 +1,6 @@
 package cn.cutepikachu.yangtuyunju.model.entity;
 
+import cn.cutepikachu.yangtuyunju.typehandler.ListTypeHandler;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
@@ -10,12 +11,14 @@ import java.io.Serial;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.List;
 
 /**
  * 商品
+ *
  * @TableName commodity
  */
-@TableName(value = "commodity")
+@TableName(value = "commodity", autoResultMap = true)
 @Data
 public class Commodity implements Serializable {
     /**
@@ -42,7 +45,8 @@ public class Commodity implements Serializable {
     /**
      * 商品图url
      */
-    private String imgUrl;
+    @TableField(typeHandler = ListTypeHandler.class)
+    private List<String> imgUrl;
 
     /**
      * 商品详情

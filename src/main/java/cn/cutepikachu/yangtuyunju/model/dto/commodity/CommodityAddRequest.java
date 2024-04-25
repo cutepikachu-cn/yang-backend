@@ -1,9 +1,6 @@
 package cn.cutepikachu.yangtuyunju.model.dto.commodity;
 
-import jakarta.validation.constraints.DecimalMin;
-import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.*;
 import lombok.Data;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.Range;
@@ -11,6 +8,7 @@ import org.hibernate.validator.constraints.Range;
 import java.io.Serial;
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.List;
 
 /**
  * @author 笨蛋皮卡丘
@@ -27,9 +25,8 @@ public class CommodityAddRequest implements Serializable {
     @Range(min = 0, max = 1)
     private Integer isSale;
 
-    @NotBlank
-    @Length(max = 512)
-    private String imgUrl;
+    @NotEmpty
+    private List<String> imgUrl;
 
     @NotBlank
     @Length(min = 10, max = 2048)
