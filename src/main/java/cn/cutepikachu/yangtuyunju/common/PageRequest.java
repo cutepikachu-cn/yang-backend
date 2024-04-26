@@ -1,6 +1,7 @@
 package cn.cutepikachu.yangtuyunju.common;
 
 import cn.cutepikachu.yangtuyunju.model.enums.SortOrder;
+import cn.hutool.core.util.StrUtil;
 import jakarta.validation.constraints.AssertTrue;
 import jakarta.validation.constraints.Min;
 import lombok.Data;
@@ -37,7 +38,11 @@ public class PageRequest {
 
     @AssertTrue
     boolean isValidSortOrder() {
-        return sortOrder == null || SortOrder.getEnumByValue(sortOrder) != null;
+        if (StrUtil.isBlank(sortField)) {
+            return true;
+        }
+        SortOrder sortOrderEnum = SortOrder.getEnumByValue(sortOrder);
+        return sortOrderEnum != null;
     }
 
 }
