@@ -104,62 +104,46 @@ public class OrderController {
         return ResultUtils.success(orderPage);
     }
 
-    @PostMapping("/page/vo/farm")
-    @AuthCheck(mustRole = {UserRole.FARM, UserRole.ADMIN})
+    @PostMapping("/page/vo")
     public BaseResponse<Page<OrderVO>> pageOrderVOFarm(@RequestBody @Valid OrderQueryRequest orderQueryRequest, HttpServletRequest request) {
         int current = orderQueryRequest.getCurrent();
         int pageSize = orderQueryRequest.getPageSize();
         User loginUser = userService.getLoginUser(request);
-        orderQueryRequest.setShopId(loginUser.getId());
-
+        UserRole userRole = UserRole.getEnumByValue(loginUser.getUserRole());
+        if (UserRole.FARM.equals(userRole)) {
+            orderQueryRequest.setShopId(loginUser.getId());
+        } else if (UserRole.USER.equals(userRole)) {
+            orderQueryRequest.setUserId(loginUser.getId());
+            // 不允许查询的字段
+            orderQueryRequest.setCommodityId(null);
+            orderQueryRequest.setShopId(null);
+        }
         LambdaQueryWrapper<Order> lambdaQueryWrapper = orderService.getLambdaQueryWrapper(orderQueryRequest);
         Page<Order> orderPage = orderService.page(new Page<>(current, pageSize), lambdaQueryWrapper);
         Page<OrderVO> orderVOPage = orderService.getOrderVOPage(orderPage);
         return ResultUtils.success(orderVOPage);
     }
 
-    @PostMapping("/page/vo/user")
-    @AuthCheck(mustRole = {UserRole.USER, UserRole.ADMIN})
-    public BaseResponse<Page<OrderVO>> pageOrderVOUser(@RequestBody @Valid OrderQueryRequest orderQueryRequest, HttpServletRequest request) {
-        int current = orderQueryRequest.getCurrent();
-        int pageSize = orderQueryRequest.getPageSize();
-        User loginUser = userService.getLoginUser(request);
-        orderQueryRequest.setUserId(loginUser.getId());
-
-        // 不允许查询的字段
-        orderQueryRequest.setCommodityId(null);
-        orderQueryRequest.setShopId(null);
-
-        LambdaQueryWrapper<Order> lambdaQueryWrapper = orderService.getLambdaQueryWrapper(orderQueryRequest);
-        Page<Order> orderPage = orderService.page(new Page<>(current, pageSize), lambdaQueryWrapper);
-        Page<OrderVO> orderVOPage = orderService.getOrderVOPage(orderPage);
-        return ResultUtils.success(orderVOPage);
-    }
-
-    @GetMapping("/get/vo/farm")
-    @AuthCheck(mustRole = {UserRole.FARM, UserRole.ADMIN})
+    @GetMapping("/get/vo")
     public BaseResponse<OrderVO> getOrderVOByIdFarm(@RequestParam long id, HttpServletRequest request) {
         Order order = orderService.getById(id);
         ThrowUtils.throwIf(order == null, ResponseCode.NOT_FOUND_ERROR, "订单不存在");
         User loginUser = userService.getLoginUser(request);
-        // 只能查询本商店的订单
-        if (!order.getShopId().equals(loginUser.getId())) {
-            throw new BusinessException(ResponseCode.NOT_FOUND_ERROR);
-        }
-        OrderVO orderVO = orderService.getOrderVO(order);
-        return ResultUtils.success(orderVO);
-    }
+        UserRole userRole = UserRole.getEnumByValue(loginUser.getUserRole());
+        if (UserRole.FARM.equals(userRole)) {
+            // 只能查询本商店的订单
+            if (!order.getShopId().equals(loginUser.getId())) {
+                throw new BusinessException(ResponseCode.NOT_FOUND_ERROR);
+            }
+        } else if (UserRole.USER.equals(userRole)) {
+            // 只能查询用户自己创建的订单
+            if (!order.getUserId().equals(loginUser.getId())) {
+                throw new BusinessException(ResponseCode.NOT_FOUND_ERROR);
+            }
+        } else {
 
-    @GetMapping("/get/vo/user")
-    @AuthCheck(mustRole = {UserRole.USER, UserRole.ADMIN})
-    public BaseResponse<OrderVO> getOrderVOByIdUser(@RequestParam long id, HttpServletRequest request) {
-        Order order = orderService.getById(id);
-        ThrowUtils.throwIf(order == null, ResponseCode.NOT_FOUND_ERROR, "订单不存在");
-        User loginUser = userService.getLoginUser(request);
-        // 只能查询用户自己创建的订单
-        if (!order.getUserId().equals(loginUser.getId())) {
-            throw new BusinessException(ResponseCode.NOT_FOUND_ERROR);
         }
+
         OrderVO orderVO = orderService.getOrderVO(order);
         return ResultUtils.success(orderVO);
     }
