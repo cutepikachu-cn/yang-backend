@@ -58,6 +58,9 @@ public class CommodityServiceImpl extends ServiceImpl<CommodityMapper, Commodity
             boolean isAsc = sortOrder.equals(SortOrder.SORT_ORDER_ASC.getValue());
             switch (sortField.toLowerCase()) {
                 case "price" -> lambdaQueryWrapper.orderBy(true, isAsc, Commodity::getPrice);
+                case "visitnum" -> lambdaQueryWrapper.orderBy(true, isAsc, Commodity::getVisitNum);
+                case "sharenum" -> lambdaQueryWrapper.orderBy(true, isAsc, Commodity::getShareNum);
+                case "hot" -> lambdaQueryWrapper.orderBy(true, isAsc, Commodity::getHot);
                 case "createtime" -> lambdaQueryWrapper.orderBy(true, isAsc, Commodity::getCreateTime);
             }
         }

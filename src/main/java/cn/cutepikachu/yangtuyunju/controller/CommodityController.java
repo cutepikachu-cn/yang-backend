@@ -17,6 +17,7 @@ import cn.cutepikachu.yangtuyunju.service.UserService;
 import cn.cutepikachu.yangtuyunju.util.ResultUtils;
 import cn.cutepikachu.yangtuyunju.util.ThrowUtils;
 import cn.hutool.core.bean.BeanUtil;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import jakarta.annotation.Resource;
 import jakarta.servlet.http.HttpServletRequest;
@@ -117,7 +118,7 @@ public class CommodityController {
      * @return
      */
     @GetMapping("/get/vo")
-    public BaseResponse<CommodityVO> getCommodityVOById(@RequestParam long id, HttpServletRequest request) {
+    public BaseResponse<CommodityVO> getCommodityVOById(@RequestParam long id) {
         Commodity commodity = commodityService.getById(id);
         ThrowUtils.throwIf(commodity == null, ResponseCode.NOT_FOUND_ERROR, "商品不存在");
         CommodityVO commodityVO = commodityService.getCommodityVO(commodity);
@@ -130,12 +131,13 @@ public class CommodityController {
      * @param commodityQueryRequest
      * @return
      */
-    @PostMapping("/list/page")
+    @PostMapping("/page")
     @AuthCheck(mustRole = {UserRole.FARM, UserRole.ADMIN})
-    public BaseResponse<Page<Commodity>> listCommodityByPage(@RequestBody @Valid CommodityQueryRequest commodityQueryRequest) {
+    public BaseResponse<Page<Commodity>> pageCommodity(@RequestBody @Valid CommodityQueryRequest commodityQueryRequest) {
         long current = commodityQueryRequest.getCurrent();
         long pageSize = commodityQueryRequest.getPageSize();
-        Page<Commodity> commodityPage = commodityService.page(new Page<>(current, pageSize), commodityService.getLambdaQueryWrapper(commodityQueryRequest));
+        LambdaQueryWrapper<Commodity> lambdaQueryWrapper = commodityService.getLambdaQueryWrapper(commodityQueryRequest);
+        Page<Commodity> commodityPage = commodityService.page(new Page<>(current, pageSize), lambdaQueryWrapper);
         return ResultUtils.success(commodityPage);
     }
 
@@ -143,15 +145,14 @@ public class CommodityController {
      * 分页获取列表（封装类）
      *
      * @param commodityQueryRequest
-     * @param request
      * @return
      */
-    @PostMapping("/list/page/vo")
-    public BaseResponse<Page<CommodityVO>> listCommodityVOByPage(@RequestBody CommodityQueryRequest commodityQueryRequest,
-                                                                 HttpServletRequest request) {
+    @PostMapping("/page/vo")
+    public BaseResponse<Page<CommodityVO>> pageCommodityVO(@RequestBody @Valid CommodityQueryRequest commodityQueryRequest) {
         long current = commodityQueryRequest.getCurrent();
         long pageSize = commodityQueryRequest.getPageSize();
-        Page<Commodity> commodityPage = commodityService.page(new Page<>(current, pageSize), commodityService.getLambdaQueryWrapper(commodityQueryRequest));
+        LambdaQueryWrapper<Commodity> lambdaQueryWrapper = commodityService.getLambdaQueryWrapper(commodityQueryRequest);
+        Page<Commodity> commodityPage = commodityService.page(new Page<>(current, pageSize), lambdaQueryWrapper);
         Page<CommodityVO> commodityVOPage = commodityService.getCommodityVOPage(commodityPage);
         return ResultUtils.success(commodityVOPage);
     }
@@ -164,9 +165,9 @@ public class CommodityController {
      * @return
      */
     @AuthCheck(mustRole = UserRole.FARM)
-    @PostMapping("/self/list/page/vo")
-    public BaseResponse<Page<CommodityVO>> listSelfCommodityVOByPage(@RequestBody @Valid CommodityQueryRequest commodityQueryRequest,
-                                                                     HttpServletRequest request) {
+    @PostMapping("/page/vo/self")
+    public BaseResponse<Page<CommodityVO>> pageSelfCommodityVO(@RequestBody @Valid CommodityQueryRequest commodityQueryRequest,
+                                                               HttpServletRequest request) {
         User loginUser = userService.getLoginUser(request);
         commodityQueryRequest.setShopId(loginUser.getId());
         long current = commodityQueryRequest.getCurrent();
