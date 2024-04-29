@@ -105,7 +105,7 @@ public class OrderController {
     }
 
     @PostMapping("/page/vo")
-    public BaseResponse<Page<OrderVO>> pageOrderVOFarm(@RequestBody @Valid OrderQueryRequest orderQueryRequest, HttpServletRequest request) {
+    public BaseResponse<Page<OrderVO>> pageOrderVO(@RequestBody @Valid OrderQueryRequest orderQueryRequest, HttpServletRequest request) {
         int current = orderQueryRequest.getCurrent();
         int pageSize = orderQueryRequest.getPageSize();
         User loginUser = userService.getLoginUser(request);

@@ -2,7 +2,6 @@ package cn.cutepikachu.yangtuyunju.model.dto.order;
 
 import cn.cutepikachu.yangtuyunju.common.PageRequest;
 import cn.cutepikachu.yangtuyunju.model.enums.OrderStatus;
-import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.AssertTrue;
 import jakarta.validation.constraints.PastOrPresent;
 import lombok.Data;
@@ -62,7 +61,6 @@ public class OrderQueryRequest extends PageRequest implements Serializable {
     @PastOrPresent
     private Date updateTimeEnd;
 
-    @Schema
     @AssertTrue
     boolean isValidOrderStatus() {
         return status == null || OrderStatus.getEnumByValue(status) != null;
