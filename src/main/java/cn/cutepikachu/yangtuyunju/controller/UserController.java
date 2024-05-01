@@ -199,9 +199,9 @@ public class UserController {
      * @param userQueryRequest
      * @return
      */
-    @PostMapping("/list/page")
+    @PostMapping("/page")
     @AuthCheck(mustRole = UserRole.ADMIN)
-    public BaseResponse<Page<User>> listUserByPage(@RequestBody @Valid UserQueryRequest userQueryRequest) {
+    public BaseResponse<Page<User>> pageUser(@RequestBody @Valid UserQueryRequest userQueryRequest) {
         long current = userQueryRequest.getCurrent();
         long size = userQueryRequest.getPageSize();
         LambdaQueryWrapper<User> lambdaQueryWrapper = userService.getLambdaQueryWrapper(userQueryRequest);
@@ -215,8 +215,8 @@ public class UserController {
      * @param userQueryRequest
      * @return
      */
-    @PostMapping("/list/page/vo")
-    public BaseResponse<Page<UserVO>> listUserVOByPage(@RequestBody @Valid UserQueryRequest userQueryRequest) {
+    @PostMapping("/page/vo")
+    public BaseResponse<Page<UserVO>> pageUserVO(@RequestBody @Valid UserQueryRequest userQueryRequest) {
         long current = userQueryRequest.getCurrent();
         long pageSize = userQueryRequest.getPageSize();
         LambdaQueryWrapper<User> lambdaQueryWrapper = userService.getLambdaQueryWrapper(userQueryRequest);

@@ -131,9 +131,9 @@ public class PostController {
      * @param postQueryRequest
      * @return
      */
-    @PostMapping("/list/page")
+    @PostMapping("/page")
     @AuthCheck(mustRole = UserRole.ADMIN)
-    public BaseResponse<Page<Post>> listPostByPage(@RequestBody @Valid PostQueryRequest postQueryRequest) {
+    public BaseResponse<Page<Post>> pagePost(@RequestBody @Valid PostQueryRequest postQueryRequest) {
         long current = postQueryRequest.getCurrent();
         long size = postQueryRequest.getPageSize();
         Page<Post> postPage = postService.page(new Page<>(current, size),
@@ -148,8 +148,8 @@ public class PostController {
      * @param request
      * @return
      */
-    @PostMapping("/list/page/vo")
-    public BaseResponse<Page<PostVO>> listPostVOByPage(@RequestBody PostQueryRequest postQueryRequest,
+    @PostMapping("/page/vo")
+    public BaseResponse<Page<PostVO>> pagePostVO(@RequestBody PostQueryRequest postQueryRequest,
                                                        HttpServletRequest request) {
         long current = postQueryRequest.getCurrent();
         long size = postQueryRequest.getPageSize();
@@ -166,8 +166,8 @@ public class PostController {
      * @param request
      * @return
      */
-    @PostMapping("/self/list/page/vo")
-    public BaseResponse<Page<PostVO>> listSelfPostVOByPage(@RequestBody @Valid PostQueryRequest postQueryRequest,
+    @PostMapping("/page/vo/self")
+    public BaseResponse<Page<PostVO>> pageSelfPostVO(@RequestBody @Valid PostQueryRequest postQueryRequest,
                                                            HttpServletRequest request) {
         User loginUser = userService.getLoginUser(request);
         postQueryRequest.setUserId(loginUser.getId());

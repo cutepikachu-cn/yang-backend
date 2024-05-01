@@ -51,7 +51,7 @@ public class PostFavourServiceImpl extends ServiceImpl<PostFavourMapper, PostFav
     }
 
     @Override
-    public Page<Post> listFavourPostByPage(long current, long pageSize, long userId) {
+    public Page<Post> pageFavourPost(long current, long pageSize, long userId) {
         return baseMapper.listFavourPostByPage(new Page<>(current, pageSize), userId);
     }
 

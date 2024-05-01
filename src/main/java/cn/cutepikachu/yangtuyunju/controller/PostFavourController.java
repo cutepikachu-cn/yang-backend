@@ -65,13 +65,13 @@ public class PostFavourController {
      * @param pageRequest
      * @param request
      */
-    @PostMapping("/self/list/page")
-    public BaseResponse<Page<PostVO>> listSelfFavourPostByPage(@RequestBody @Valid PageRequest pageRequest,
+    @PostMapping("/page/self")
+    public BaseResponse<Page<PostVO>> pageSelfFavourPost(@RequestBody @Valid PageRequest pageRequest,
                                                                HttpServletRequest request) {
         User loginUser = userService.getLoginUser(request);
         long current = pageRequest.getCurrent();
         long size = pageRequest.getPageSize();
-        Page<Post> postPage = postFavourService.listFavourPostByPage(current, size, loginUser.getId());
+        Page<Post> postPage = postFavourService.pageFavourPost(current, size, loginUser.getId());
         Page<PostVO> postVOPage = postService.getPostVOPage(postPage, request);
         return ResultUtils.success(postVOPage);
     }
@@ -82,13 +82,13 @@ public class PostFavourController {
      * @param postFavourQueryRequest
      * @param request
      */
-    @PostMapping("/list/page")
-    public BaseResponse<Page<PostVO>> listFavourPostByPage(@RequestBody @Valid PostFavourQueryRequest postFavourQueryRequest,
+    @PostMapping("/page")
+    public BaseResponse<Page<PostVO>> pageFavourPost(@RequestBody @Valid PostFavourQueryRequest postFavourQueryRequest,
                                                            HttpServletRequest request) {
         long current = postFavourQueryRequest.getCurrent();
         long pageSize = postFavourQueryRequest.getPageSize();
         Long userId = postFavourQueryRequest.getUserId();
-        Page<Post> postPage = postFavourService.listFavourPostByPage(current, pageSize, userId);
+        Page<Post> postPage = postFavourService.pageFavourPost(current, pageSize, userId);
         return ResultUtils.success(postService.getPostVOPage(postPage, request));
     }
 }
