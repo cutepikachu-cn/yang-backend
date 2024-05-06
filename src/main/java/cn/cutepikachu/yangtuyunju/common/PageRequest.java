@@ -4,6 +4,7 @@ import cn.cutepikachu.yangtuyunju.model.enums.SortOrder;
 import cn.hutool.core.util.StrUtil;
 import jakarta.validation.constraints.AssertTrue;
 import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 import org.hibernate.validator.constraints.Range;
 
@@ -17,12 +18,14 @@ public class PageRequest {
     /**
      * 当前页号
      */
+    @NotNull
     @Min(1)
     private int current = 1;
 
     /**
      * 页面大小
      */
+    @NotNull
     @Range(min = 1, max = 20)
     private int pageSize = 5;
 

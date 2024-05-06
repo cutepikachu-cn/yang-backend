@@ -1,6 +1,7 @@
 package cn.cutepikachu.yangtuyunju.common;
 
 import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
 import java.io.Serial;
@@ -13,6 +14,7 @@ import java.io.Serializable;
 @Data
 public class DeleteRequest implements Serializable {
 
+    @NotNull
     @Min(1)
     private Long id;
 
